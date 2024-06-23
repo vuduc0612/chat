@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { User } from '../user/entity/user.entity';
-import { Auth, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AuthDto } from './dto/auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { InjectQueue } from '@nestjs/bull';
@@ -35,7 +35,7 @@ export class AuthService {
                 body: `<b>Thank you for signing up. Please confirm your account by clicking on the following link: 
                 <a href="http://localhost:3003/auth/confirm/${confirmationCode}">Confirm Account</a></b>`,
             }, {removeOnComplete: true});
-            // await this.mailService.sendMail({
+            // const result = await this.mailService.sendMail({
             //     from:`No Reply <${this.configService.getOrThrow('MAIL_USER')}>`, 
             //     to: dto.email,
             //     subject: 'Welcome to our platform',
