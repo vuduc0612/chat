@@ -3,6 +3,7 @@ import { AuthService } from '@modules/auth/auth.service';
 
 import { AuthDto } from './dto/auth.dto';
 import { Public } from './decorator/public.decorator';
+import { RegisterDto } from './dto/register.dto';
 
 @Public()
 @Controller('auth')
@@ -10,7 +11,7 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Post('signup')
-    signup(@Body() dto: AuthDto) {
+    signup(@Body() dto: RegisterDto) {
         return this.authService.signUp(dto);
     }
 

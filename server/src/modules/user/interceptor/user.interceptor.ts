@@ -8,7 +8,8 @@ export class UserInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(map((data) => {
-          const result = data.map(({password, firstName, lastName, ...user}) => user);
+          const result = data.map(({password, avatar, birthday, createdAt, updatedAt, isActive, confirmationCode, fullName, ...user}) => user);
+          console.log(result);
           return result;
       }));
   }

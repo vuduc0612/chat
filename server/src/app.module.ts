@@ -7,6 +7,7 @@ import { UserModule } from '@modules/user/user.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { APP_GUARD, Reflector } from '@nestjs/core';
 import { AuthGuard } from '@modules/auth/guard/auth.guard';
+import { ChatModule } from './modules/chat/chat.module';
 
 
 @Module({
@@ -18,6 +19,7 @@ import { AuthGuard } from '@modules/auth/guard/auth.guard';
     DatabaseModule,
     UserModule,
     AuthModule,
+    ChatModule,
   ],
   providers: [
     {

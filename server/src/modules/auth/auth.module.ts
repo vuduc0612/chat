@@ -8,6 +8,7 @@ import { User } from '@modules/user/entity/user.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BullModule } from '@nestjs/bull';
 import { EmailConsumer } from './consumer/mail.consumer';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [JwtModule,
@@ -36,6 +37,7 @@ import { EmailConsumer } from './consumer/mail.consumer';
       }),
       inject: [ConfigService],
     }),
+    CacheModule.register()
 
   ],
   controllers: [AuthController],

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -9,6 +9,9 @@ import { AuthDto } from './dto/auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { RegisterDto } from './dto/register.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 @Injectable()
 export class AuthService {
     constructor(private configService: ConfigService,
@@ -18,9 +21,11 @@ export class AuthService {
         private mailService: MailerService,
         @InjectQueue('email-queue') 
         private readonly emailQueue: Queue,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) { }
 
-    async signUp(dto: AuthDto) {
+    async signUp(dto: RegisterDto) {
+        console.log(dto);
         const user = await this.userRepository.findOneBy({email: dto.email });
         if (!user) {
             const hashedPassword = await argon.hash(dto.password);
@@ -33,7 +38,7 @@ export class AuthService {
                 to: dto.email,
                 subject: 'welcome to my web chat',
                 body: `<b>Thank you for signing up. Please confirm your account by clicking on the following link: 
-                <a href="http://localhost:3003/auth/confirm/${confirmationCode}">Confirm Account</a></b>`,
+                <a href="http://localhost:3000/auth/confirm/${confirmationCode}">Confirm Account</a></b>`,
             }, {removeOnComplete: true});
             // const result = await this.mailService.sendMail({
             //     from:`No Reply <${this.configService.getOrThrow('MAIL_USER')}>`, 
@@ -46,6 +51,7 @@ export class AuthService {
                 throw new ForbiddenException('Error sending email');
             }
             await this.userRepository.save(newUser);
+            this.cacheManager.del('users');
             return {
                 msg: 'User created successfully, please check your email to confirm your account'
             }
@@ -71,6 +77,7 @@ export class AuthService {
     }
 
     async signIn(dto: AuthDto) {
+        
         const user = await this.userRepository.findOneBy({email: dto.email });
         if(!user) {
             throw new ForbiddenException('User not found');
